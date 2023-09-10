@@ -74,7 +74,8 @@ class SentimentVisualizer:
     def visualize_sentiment_summary(self, sentiment_data):
         df = pd.DataFrame(sentiment_data)
         plt.figure(figsize=(10, 6))
-        sns.countplot(x='sentiment', data=df, order=['Positive', 'Neutral', 'Negative'])
+        sns.countplot(x='sentiment', data=df, order=[
+                      'Positive', 'Neutral', 'Negative'])
         plt.title('Sentiment Analysis Summary')
         plt.xlabel('Sentiment')
         plt.ylabel('Count')
@@ -102,7 +103,8 @@ class SentimentAnalysisResultsSaver:
             os.makedirs(output_dir)
 
         current_datetime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        file_path = os.path.join(output_dir, f'sentiment_analysis_{current_datetime}.json')
+        file_path = os.path.join(
+            output_dir, f'sentiment_analysis_{current_datetime}.json')
 
         with open(file_path, 'w') as file:
             json.dump(results, file)
@@ -117,29 +119,35 @@ class SentimentAnalysisTool:
         self.email_notifier = EmailNotifier()
 
     def run(self):
-        platform = input('Enter the social media platform (Twitter, Facebook, Instagram, LinkedIn): ')
+        platform = input(
+            'Enter the social media platform (Twitter, Facebook, Instagram, LinkedIn): ')
         keyword = input('Enter the keyword to search: ')
         num_posts = int(input('Enter the number of posts to analyze: '))
         output_dir = input('Enter the output directory to save the results: ')
-        email_notification = input('Enable email notification? (yes/no): ').lower()
+        email_notification = input(
+            'Enable email notification? (yes/no): ').lower()
 
         try:
-            scraped_posts = self.scraper.scrape_social_media(platform, keyword, num_posts)
+            scraped_posts = self.scraper.scrape_social_media(
+                platform, keyword, num_posts)
 
             sentiment_data = []
             for post in scraped_posts:
                 sentiment_score = self.analyzer.analyze_sentiment(post['text'])
-                sentiment_data.append({'text': post['text'], 'sentiment': sentiment_score})
+                sentiment_data.append(
+                    {'text': post['text'], 'sentiment': sentiment_score})
 
             self.visualizer.visualize_sentiment_summary(sentiment_data)
 
-            self.results_saver.save_sentiment_analysis_results(sentiment_data, output_dir)
+            self.results_saver.save_sentiment_analysis_results(
+                sentiment_data, output_dir)
 
             if email_notification == 'yes':
                 email = input('Enter your email address: ')
                 subject = 'Sentiment Analysis Results'
                 body = f'The sentiment analysis for keyword "{keyword}" on {platform} has been completed.'
-                self.email_notifier.send_email_notification(email, subject, body)
+                self.email_notifier.send_email_notification(
+                    email, subject, body)
 
             print('Sentiment analysis completed successfully.')
 
